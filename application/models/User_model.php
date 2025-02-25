@@ -26,6 +26,14 @@ class User_model extends CI_Model {
 
     // Fetch all users
     public function get_all_users() {
-        return $this->db->get('users')->result();  // Fetch all users from the 'users' table
+        return $this->db->get('users')->result();
+    }
+
+    // Check if a username or email already exists
+    public function check_exists($field, $value) {
+        $this->db->where($field, $value);
+        $query = $this->db->get('users');
+
+        return $query->num_rows() > 0;
     }
 }

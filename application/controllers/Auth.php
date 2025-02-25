@@ -8,11 +8,15 @@ class Auth extends CI_Controller {
         $this->load->model('User_model');
         $this->load->helper(['form', 'url']);
         $this->load->library(['form_validation', 'session']);
-        $this->load->database(); // Ensure the database is loaded
     }
 
     // Register User
     public function register() {
+        if ($this->session->userdata('user_id')) {
+            redirect('dashboard'); // Prevent access if already logged in
+            return;
+        }
+
         $this->form_validation->set_rules('username', 'Username', 'required|trim');
         $this->form_validation->set_rules('email', 'Email', 'required|valid_email|trim');
         $this->form_validation->set_rules('password', 'Password', 'required|min_length[6]');
@@ -21,9 +25,26 @@ class Auth extends CI_Controller {
         if ($this->form_validation->run() == FALSE) {
             $this->load->view('register');
         } else {
+            $username = $this->input->post('username', TRUE);
+            $email = $this->input->post('email', TRUE);
+
+            // Check if username or email already exists
+            if ($this->User_model->check_exists('username', $username)) {
+                $this->session->set_flashdata('error', 'Username is already taken.');
+                redirect('auth/register');
+                return;
+            }
+
+            if ($this->User_model->check_exists('email', $email)) {
+                $this->session->set_flashdata('error', 'Email is already registered.');
+                redirect('auth/register');
+                return;
+            }
+
+            // Hash password and insert user
             $data = [
-                'username' => $this->input->post('username', TRUE),
-                'email' => $this->input->post('email', TRUE),
+                'username' => $username,
+                'email' => $email,
                 'password' => password_hash($this->input->post('password'), PASSWORD_BCRYPT)
             ];
 
@@ -39,6 +60,11 @@ class Auth extends CI_Controller {
 
     // Login User
     public function login() {
+        if ($this->session->userdata('user_id')) {
+            redirect('dashboard'); 
+            return;
+        }
+
         $this->form_validation->set_rules('email', 'Email', 'required|valid_email|trim');
         $this->form_validation->set_rules('password', 'Password', 'required');
 
@@ -65,5 +91,27 @@ class Auth extends CI_Controller {
         $this->session->unset_userdata(['user_id', 'username']);
         $this->session->sess_destroy();
         redirect('auth/login');
+    }
+
+    // Check if username exists (AJAX)
+    public function check_username() {
+        $username = $this->input->post('username');
+        if (!$username) {
+            echo "invalid";
+            return;
+        }
+        $exists = $this->User_model->check_exists('username', $username);
+        echo $exists ? "exists" : "available";
+    }
+
+    // Check if email exists (AJAX)
+    public function check_email() {
+        $email = $this->input->post('email');
+        if (!$email) {
+            echo "invalid";
+            return;
+        }
+        $exists = $this->User_model->check_exists('email', $email);
+        echo $exists ? "exists" : "available";
     }
 }

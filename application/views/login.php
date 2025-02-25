@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <link rel="stylesheet" href="<?php echo base_url('assets/css/styles.css'); ?>">
+
+    <script src="<?php echo base_url('assets/js/jquery.min.js'); ?>"></script>
+    <script src="<?php echo base_url('assets/js/jquery.validate.min.js'); ?>"></script>
+    <script src="<?php echo base_url('assets/js/validate.js'); ?>"></script>  <!-- Your custom validation script -->
 </head>
 <body>
     <div class="login-container">  <!-- Added the container -->
@@ -20,7 +24,7 @@
 
         <?php echo validation_errors(); // Display form validation errors ?>
 
-        <?php echo form_open('auth/login'); ?>
+        <?php echo form_open('auth/login', ['id' => 'login-form']); ?>
             <div>
                 <label for="email">Email:</label>
                 <input type="email" name="email" id="email" value="<?php echo set_value('email'); ?>" required>
@@ -36,5 +40,14 @@
 
         <p>Don't have an account? <a href="<?= site_url('auth/register'); ?>">Register here</a></p>
     </div>  <!-- Close the container -->
+    <script>
+    console.log("Checking jQuery...");
+    if (typeof jQuery !== "undefined") {
+        console.log("✅ jQuery is loaded:", jQuery.fn.jquery);
+    } else {
+        console.log("❌ jQuery is NOT loaded!");
+    }
+</script>
+
 </body>
-</html>
+</html>  
