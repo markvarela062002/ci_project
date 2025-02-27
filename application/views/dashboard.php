@@ -131,23 +131,54 @@
 
         let editUserId = null;
 
-        function editUser(userId, currentUsername, currentEmail) {
-            editUserId = userId;
-            $("#editUsername").val(currentUsername);
-            $("#editEmail").val(currentEmail);
+function editUser(userId, currentUsername, currentEmail) {
+    editUserId = userId;
+    $("#editUsername").val(currentUsername);
+    $("#editEmail").val(currentEmail);
 
-            if (userId == loggedInUserId) {
-                $("#editUsername").prop("disabled", true);
+
+
+
+    $("#editModal").fadeIn();
+}
+
+function closeModal() {
+    $("#editModal").fadeOut();
+}
+
+// Save changes when clicking "Save" button
+$("#saveEditBtn").click(function() {
+    let newUsername = $("#editUsername").val().trim();
+    let newEmail = $("#editEmail").val().trim();
+
+    if (!newUsername || !newEmail) {
+        alert("Username and Email cannot be empty!");
+        return;
+    }
+
+    $.ajax({
+        url: "<?= site_url('dashboard/update_user'); ?>",
+        type: "POST",
+        data: {
+            user_id: editUserId,
+            username: newUsername,
+            email: newEmail
+        },
+        dataType: "json",
+        success: function(response) {
+            if (response.status === "success") {
+                alert("User updated successfully!");
+                location.reload(); // Refresh the page to show updates
             } else {
-                $("#editUsername").prop("disabled", false);
+                alert(response.message);
             }
-
-            $("#editModal").fadeIn();
+        },
+        error: function() {
+            alert("Something went wrong. Please try again.");
         }
+    });
+});
 
-        function closeModal() {
-            $("#editModal").fadeOut();
-        }
 
         function deleteUser(userId) {
             if (!confirm("Are you sure you want to delete this user?")) return;

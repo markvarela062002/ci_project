@@ -21,29 +21,37 @@ class Dashboard extends CI_Controller {
     }
 
     // Update User Username and Email
-    public function edit_user() {
-        $user_id = $this->input->post('user_id');
-        $new_username = $this->input->post('username');
-        $new_email = $this->input->post('email');
-
-        if (!$user_id || empty($new_username) || empty($new_email)) {
-            echo json_encode(["status" => "error", "message" => "All fields are required"]);
+    public function update_user() {
+        $userId = $this->input->post('user_id');
+        $newUsername = $this->input->post('username');
+        $newEmail = $this->input->post('email');
+    
+        if (empty($userId) || empty($newUsername) || empty($newEmail)) {
+            echo json_encode(["status" => "error", "message" => "All fields are required!"]);
             return;
         }
-
-        $update_data = [
-            'username' => $new_username,
-            'email' => $new_email
-        ];
-
-        $updated = $this->User_model->update_user($user_id, $update_data);
-
-        if ($updated) {
-            echo json_encode(["status" => "success", "message" => "User updated successfully"]);
+    
+        // Check if the username or email already exists for another user
+        $this->db->where('id !=', $userId);
+        $this->db->where("(username = '$newUsername' OR email = '$newEmail')");
+        $existingUser = $this->db->get('users')->row();
+    
+        if ($existingUser) {
+            echo json_encode(["status" => "error", "message" => "Username or Email already exists!"]);
+            return;
+        }
+    
+        // Update user in the database
+        $this->db->where('id', $userId);
+        $update = $this->db->update('users', ['username' => $newUsername, 'email' => $newEmail]);
+    
+        if ($update) {
+            echo json_encode(["status" => "success"]);
         } else {
-            echo json_encode(["status" => "error", "message" => "Failed to update user"]);
+            echo json_encode(["status" => "error", "message" => "Failed to update user!"]);
         }
     }
+    
 
     // Delete User
     public function delete_user() {
