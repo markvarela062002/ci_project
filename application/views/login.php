@@ -28,6 +28,7 @@
         <!-- Validation Errors -->
         <?php if (validation_errors()): ?>
             <div class="message error"><?= validation_errors(); ?></div>
+            
         <?php endif; ?>
 
         <?php echo form_open('auth/login', ['id' => 'login-form']); ?>

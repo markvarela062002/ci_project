@@ -1,0 +1,130 @@
+{
+    "openapi": "3.0.0",
+    "paths": {
+        "GET/api/v1/users/{enccode}": {
+            "get": {
+                "tags": [
+                    "Registration"
+                ],
+                "summary": "This will post the User Name, Email, Password of the User",
+                "operationId": "UserController::register",
+                "responses": {
+                    "404": {
+                        "description": "Username is already taken."
+                    },
+                    "201": {
+                        "description": "Email is already registered."
+                    },
+                    "202": {
+                        "description": "Registration successful! Please log in."
+                    },
+                    "403": {
+                        "description": "Registration failed. Try again.."
+                    }
+                },
+                "security": [
+                    {
+                        "basicAuth": []
+                    }
+                ]
+            }
+        },
+        "POST/api/v1/users{enccode}": {
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "This will post the Username and  Email",
+                "responses": {
+                    "401": {
+                        "description": "Invalid email or password."
+                    }
+                },
+                "security": [
+                    {
+                        "basicAuth": []
+                    }
+                ]
+            }
+        },
+        "PATCH/api/v1/users/id{enccode}": {
+            "patch": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "This will update the Username and  Email",
+                "responses": {
+                    "409": {
+                        "description": "Username or Email already exists!"
+                    },
+                    "500": {
+                        "description": "Failed to update user!"
+                    }
+                },
+                "security": [
+                    {
+                        "basicAuth": []
+                    }
+                ]
+            }
+        },
+        "DELETE/api/v1/users/id{enccode}": {
+            "delete": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "This will delete the User",
+                "operationId": "UserController::login",
+                "responses": {
+                    "204": {
+                        "description": "Success!"
+                    },
+                    "404": {
+                        "description": "Failed to delete user!"
+                    }
+                },
+                "security": [
+                    {
+                        "basicAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "User": {
+                "title": "User model",
+                "description": "User model",
+                "properties": {
+                    "id": {
+                        "title": "ID",
+                        "description": "ID",
+                        "type": "integer"
+                    },
+                    "username": {
+                        "title": "Username",
+                        "description": "Username",
+                        "type": "string"
+                    },
+                    "email": {
+                        "title": "Email",
+                        "description": "Email",
+                        "type": "string"
+                    },
+                    "password": {
+                        "title": "Password",
+                        "description": "Password",
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "title": "Date Created",
+                        "description": "Date Created",
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            }
+        }
+    }
+}
